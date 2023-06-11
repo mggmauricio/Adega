@@ -88,7 +88,7 @@ instance:
 - type: 'pit'
 - mode: 'LPTMR_GENERAL'
 - custom_name_enabled: 'true'
-- type_id: 'pit_ab54f91356454adb874dafbb69e655fd'
+- type_id: 'pit_a4782ba5223c8a2527ba91aeb2bc4159'
 - functional_group: 'BOARD_InitPeripherals'
 - peripheral: 'PIT'
 - config_sets:
@@ -131,36 +131,6 @@ static void PIT_1_init(void) {
 }
 
 /***********************************************************************************************************************
- * GPIO_1 initialization code
- **********************************************************************************************************************/
-/* clang-format off */
-/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
-instance:
-- name: 'GPIO_1'
-- type: 'gpio'
-- mode: 'GPIO'
-- custom_name_enabled: 'true'
-- type_id: 'gpio_5920c5e026e8e974e6dc54fbd5e22ad7'
-- functional_group: 'BOARD_InitPeripherals'
-- peripheral: 'GPIOC'
-- config_sets:
-  - fsl_gpio:
-    - enable_irq: 'false'
-    - port_interrupt:
-      - IRQn: 'PORTC_IRQn'
-      - enable_interrrupt: 'enabled'
-      - enable_priority: 'false'
-      - priority: '0'
-      - enable_custom_name: 'false'
-    - quick_selection: 'QS_GPIO_1'
- * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
-/* clang-format on */
-
-static void GPIO_1_init(void) {
-  /* Make sure, the clock gate for port C is enabled (e. g. in pin_mux.c) */
-}
-
-/***********************************************************************************************************************
  * ADC16_1 initialization code
  **********************************************************************************************************************/
 /* clang-format off */
@@ -170,7 +140,7 @@ instance:
 - type: 'adc16'
 - mode: 'ADC'
 - custom_name_enabled: 'true'
-- type_id: 'adc16_897558f9b7366ed198de18c33097d7d2'
+- type_id: 'adc16_7d827be2dc433dc756d94a7ce88cbcc5'
 - functional_group: 'BOARD_InitPeripherals'
 - peripheral: 'ADC0'
 - config_sets:
@@ -182,7 +152,6 @@ instance:
       - clockDivider: 'kADC16_ClockDivider8'
       - resolution: 'kADC16_ResolutionSE16Bit'
       - longSampleMode: 'kADC16_LongSampleDisabled'
-      - hardwareAverageMode: 'kADC16_HardwareAverageDisabled'
       - enableHighSpeed: 'false'
       - enableLowPower: 'false'
       - enableContinuousConversion: 'true'
@@ -192,6 +161,7 @@ instance:
     - doAutoCalibration: 'false'
     - offset: '0'
     - trigger: 'false'
+    - hardwareAverageConfiguration: 'kADC16_HardwareAverageDisabled'
     - enable_dma: 'false'
     - enable_irq: 'false'
     - adc_interrupt:
@@ -224,18 +194,20 @@ const adc16_config_t ADC16_1_config = {
   .clockDivider = kADC16_ClockDivider8,
   .resolution = kADC16_ResolutionSE16Bit,
   .longSampleMode = kADC16_LongSampleDisabled,
-  .hardwareAverageMode = kADC16_HardwareAverageDisabled,
   .enableHighSpeed = false,
   .enableLowPower = false,
   .enableContinuousConversion = true
 };
 const adc16_channel_mux_mode_t ADC16_1_muxMode = kADC16_ChannelMuxA;
+const adc16_hardware_average_mode_t ADC16_1_hardwareAverageMode = kADC16_HardwareAverageDisabled;
 
 static void ADC16_1_init(void) {
   /* Initialize ADC16 converter */
   ADC16_Init(ADC16_1_PERIPHERAL, &ADC16_1_config);
   /* Make sure, that software trigger is used */
   ADC16_EnableHardwareTrigger(ADC16_1_PERIPHERAL, false);
+  /* Configure hardware average mode */
+  ADC16_SetHardwareAverage(ADC16_1_PERIPHERAL, ADC16_1_hardwareAverageMode);
   /* Configure channel multiplexing mode */
   ADC16_SetChannelMuxMode(ADC16_1_PERIPHERAL, ADC16_1_muxMode);
   /* Initialize channel */
@@ -252,7 +224,7 @@ instance:
 - type: 'uart'
 - mode: 'polling'
 - custom_name_enabled: 'false'
-- type_id: 'uart_9b45c456566d03f79ecfe90751c10bb4'
+- type_id: 'uart_cd31a12aa8c79051fda42cc851a27c37'
 - functional_group: 'BOARD_InitPeripherals'
 - peripheral: 'UART0'
 - config_sets:
@@ -262,18 +234,12 @@ instance:
       - clockSourceFreq: 'GetFreq'
       - baudRate_Bps: '115200'
       - parityMode: 'kUART_ParityDisabled'
-      - dataBitsCount: 'kUART_EightDataBits'
       - stopBitCount: 'kUART_OneStopBit'
-      - enableMatchAddress1: 'false'
-      - matchAddress1: '0'
-      - enableMatchAddress2: 'false'
-      - matchAddress2: '0'
       - txFifoWatermark: '0'
       - rxFifoWatermark: '1'
       - idleType: 'kUART_IdleTypeStartBit'
       - enableTx: 'true'
       - enableRx: 'true'
-    - quick_selection: 'QuickSelection1'
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 const uart_config_t UART0_config = {
@@ -292,15 +258,45 @@ static void UART0_init(void) {
 }
 
 /***********************************************************************************************************************
+ * GPIOC initialization code
+ **********************************************************************************************************************/
+/* clang-format off */
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+instance:
+- name: 'GPIOC'
+- type: 'gpio'
+- mode: 'GPIO'
+- custom_name_enabled: 'false'
+- type_id: 'gpio_be9de87e5addb6b0f416d9acbab34797'
+- functional_group: 'BOARD_InitPeripherals'
+- peripheral: 'GPIOC'
+- config_sets:
+  - fsl_gpio:
+    - enable_irq: 'false'
+    - port_interrupt:
+      - IRQn: 'PORTA_IRQn'
+      - enable_interrrupt: 'enabled'
+      - enable_priority: 'false'
+      - priority: '0'
+      - enable_custom_name: 'false'
+    - quick_selection: 'QS_GPIO_1'
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+/* clang-format on */
+
+static void GPIOC_init(void) {
+  /* Make sure, the clock gate for port C is enabled (e. g. in pin_mux.c) */
+}
+
+/***********************************************************************************************************************
  * Initialization functions
  **********************************************************************************************************************/
 void BOARD_InitPeripherals(void)
 {
   /* Initialize components */
   PIT_1_init();
-  GPIO_1_init();
   ADC16_1_init();
   UART0_init();
+  GPIOC_init();
 }
 
 /***********************************************************************************************************************

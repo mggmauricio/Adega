@@ -11,11 +11,11 @@
  **********************************************************************************************************************/
 #include "fsl_common.h"
 #include "fsl_pit.h"
-#include "fsl_gpio.h"
-#include "fsl_port.h"
 #include "fsl_adc16.h"
 #include "fsl_uart.h"
 #include "fsl_clock.h"
+#include "fsl_gpio.h"
+#include "fsl_port.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -33,7 +33,7 @@ extern "C" {
 /* Definition of clock source frequency. */
 #define PIT_1_CLK_FREQ CLOCK_GetFreq(PIT_1_CLOCK_SOURCE)
 /* Definition of ticks count for channel 0 - deprecated. */
-#define PIT_1_0_TICKS USEC_TO_COUNT(33333U, PIT_1_CLK_FREQ)
+#define PIT_1_0_TICKS USEC_TO_COUNT(33333U, PIT_1_CLK_FREQ) - 1U
 /* PIT_1 interrupt vector ID (number) - deprecated. */
 #define PIT_1_0_IRQN PIT0_IRQn
 /* PIT_1 interrupt handler identifier - deprecated. */
@@ -41,13 +41,11 @@ extern "C" {
 /* Definition of channel number for channel 0. */
 #define PIT_1_CHANNEL_0 kPIT_Chnl_0
 /* Definition of ticks count for channel 0. */
-#define PIT_1_CHANNEL_0_TICKS USEC_TO_COUNT(33333U, PIT_1_CLK_FREQ)
+#define PIT_1_CHANNEL_0_TICKS USEC_TO_COUNT(33333U, PIT_1_CLK_FREQ) - 1U
 /* PIT_1 interrupt vector ID (number). */
 #define PIT_1_CHANNEL_0_IRQN PIT0_IRQn
 /* PIT_1 interrupt handler identifier. */
 #define PIT_1_CHANNEL_0_IRQHANDLER PIT0_IRQHandler
-/* Alias for GPIOC peripheral */
-#define GPIO_1_GPIO GPIOC
 /* Alias for ADC0 peripheral */
 #define ADC16_1_PERIPHERAL ADC0
 /* ADC16_1 interrupt vector ID (number). */
@@ -60,6 +58,8 @@ extern "C" {
 #define UART0_PERIPHERAL UART0
 /* Definition of the clock source frequency */
 #define UART0_CLOCK_SOURCE CLOCK_GetFreq(UART0_CLK_SRC)
+/* Alias for GPIOC peripheral */
+#define GPIOC_GPIO GPIOC
 
 /***********************************************************************************************************************
  * Global variables
@@ -68,6 +68,7 @@ extern const pit_config_t PIT_1_config;
 extern adc16_channel_config_t ADC16_1_channelsConfig[1];
 extern const adc16_config_t ADC16_1_config;
 extern const adc16_channel_mux_mode_t ADC16_1_muxMode;
+extern const adc16_hardware_average_mode_t ADC16_1_hardwareAverageMode;
 extern const uart_config_t UART0_config;
 
 /***********************************************************************************************************************

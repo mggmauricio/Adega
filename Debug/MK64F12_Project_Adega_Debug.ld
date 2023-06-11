@@ -6,7 +6,7 @@
  * Generated linker script file for MK64FN1M0xxx12
  * Created from linkscript.ldt by FMCreateLinkLibraries
  * Using Freemarker v2.3.30
- * MCUXpresso IDE v11.7.1 [Build 9221] [2023-03-28] on 11 de jun de 2023 05:07:07
+ * MCUXpresso IDE v11.7.1 [Build 9221] [2023-03-28] on 11 de jun de 2023 20:10:36
  */
 
 INCLUDE "MK64F12_Project_Adega_Debug_library.ld"

@@ -79,7 +79,7 @@ void PIT_1_0_IRQHANDLER(void){
 		adc_value = ADC16_GetChannelConversionValue(ADC0, kADC16_ChannelMuxA);
 		ContadorADC = 0;
 		sprintf(VetorASerEnviado, "%d,%d,%d\n\r", temporizador, (int)(ntc_temp*100), (int)(0.4*100));
-//		UART_WriteBlocking(UART0. VetorASerEnviado, sizeof(VetorASerEnviado) -1);
+		UART_WriteBlocking(UART0, VetorASerEnviado, sizeof(VetorASerEnviado) -1);
 	}
 }
 
