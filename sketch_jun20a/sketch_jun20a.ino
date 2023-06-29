@@ -42,7 +42,7 @@ void loop() {
   } else {
     Serial.println(String(temperature));
   }
-  int pwm = sendPWM(80);
+ int pwm = sendPWM(90);
   ledcWrite(channel, pwm);
   float humidity = dht.getHumidity();
   // if (isnan(humidity)) {

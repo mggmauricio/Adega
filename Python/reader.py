@@ -6,13 +6,9 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import threading
 
-graphname = f'grafico{datetime.now()}.png'
-
-
-
-
-
-nAmostras = 1000
+graphname = f'grafico_adega{datetime.now()}.png'
+dataname = f'data_adega{datetime.now()}.csv'
+nAmostras = 1200
 # Configuração da porta serial
 serial_port = '/dev/ttyUSB0'  # Substitua pela porta serial correta
 baud_rate = 9600
@@ -21,7 +17,7 @@ baud_rate = 9600
 ser = serial.Serial(serial_port, baud_rate)
 
 # Cria um DataFrame vazio para armazenar os dados
-data = pd.DataFrame(columns=['Temperatura','Tempo'])
+data = pd.DataFrame(columns=['Temperatura', 'Tempo'])
 time_ = []
 temperature = []
 start_time = datetime.now()
@@ -35,14 +31,6 @@ fig, ax = plt.subplots()
 line, = ax.plot([], [])
 ax.set_xlabel('Tempo (s)')
 ax.set_ylabel('Temperatura')
-
-def update_graph(frame):
-    line.set_data(time_, temperature)
-    ax.relim()
-    ax.autoscale_view()
-    
-    # Salva o gráfico em uma imagem
-    fig.savefig('grafico.png')
 
 def update_graph(frame):
     line.set_data(time_, temperature)
@@ -66,16 +54,18 @@ def read_serial_data():
         elapsed_time = (current_time - start_time).total_seconds()
         elapsed_time = round(elapsed_time, 2)
         
-
         # Adiciona os dados às listas
         time_.append(elapsed_time)
         temperature.append(float(current_temperature))
         
-        
         print(f'Tempo: {elapsed_time} segundos, Temperatura: {float(current_temperature)} Amostra:{i}')
         
-        # Adiciona os dados ao DataFrame
-        data.append({'Tempo': elapsed_time, 'Temperatura': float(current_temperature)}, ignore_index=True)
+        # Adiciona os dados à lista temporária
+        data_temp = {'Tempo': elapsed_time, 'Temperatura': float(current_temperature)}
+        
+        # Salva os dados no arquivo CSV
+        df_temp = pd.DataFrame(data_temp, index=[0])
+        df_temp.to_csv(dataname, mode='a', header=not i, index=False)  # Append mode
         
         i += 1
         if i >= nAmostras:
@@ -91,6 +81,3 @@ plt.show()
 
 # Aguarda a conclusão da leitura dos dados serial
 serial_thread.join()
-
-# Salva o DataFrame no arquivo CSV
-data.to_csv('dados.csv', index=False)
