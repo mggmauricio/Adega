@@ -1,17 +1,47 @@
 #include <DHTesp.h>
-#include <heltec.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
-#define DHTPIN 17     // Pino de dados do sensor DHT11
+#define OLED_RESET -1
+Adafruit_SSD1306 display(OLED_RESET);
+// #include <heltec.h>
+
+#define DHTPIN 13     // Pino de dados do sensor DHT11
 #define DHTTYPE DHT11   // Tipo do sensor (DHT11)
-#define PWMPIN 13
+#define PWMPIN 12
+#define UPPIN 19
+#define LOWPIN 2
+#define MENUPIN 15
 
 
 const int freq = 3;
 const int resolution = 16;
 const int channel = 0;
-
+float set_temp = 20.0;
+bool actual = true;
 
 DHTesp dht;
+
+void IRAM_ATTR up() {
+  if(set_temp <= 23.0 && actual == false){
+    set_temp += 0.1;
+  } 
+}
+void IRAM_ATTR low(){
+  if(set_temp >= 12.0 && actual == false){
+  set_temp -= 0.1;
+  }
+}
+
+void IRAM_ATTR menu(){
+  if (actual == false){
+    actual = true;
+  }
+  else{
+    actual = false;
+  }
+}
 int sendPWM(int dutyCycle){
   return 65535-((65535*dutyCycle)/100);
 }
@@ -21,22 +51,35 @@ void setup() {
   ledcSetup(channel, freq, resolution);
   ledcAttachPin(PWMPIN, channel);
   dht.setup(DHTPIN, DHTesp::DHT11);
-  // Serial.println("Inicialização completa");
-  // Heltec.begin(true, true, true, true, 11520);
-  Heltec.display->init();
-  // Heltec.display->flipScreenVertically();  
-  Heltec.display->setFont(ArialMT_Plain_24);
-  Heltec.display->clear();
-  Heltec.display->drawString(33, 5, "Adega");
-  Heltec.display->drawString(10, 30, "inicializada!");
-  Heltec.display->display();
-  delay(1000);
+  Wire.begin();
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.clearDisplay();
+  pinMode(UPPIN, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(UPPIN), up, RISING);
+  pinMode(LOWPIN, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(LOWPIN), low, RISING);
+  pinMode(MENUPIN, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(MENUPIN), menu, RISING);
 }
 
 void loop() {
-  // delay(2000);  // Intervalo de leitura
-
   float temperature = dht.getTemperature();
+  delay(2000);  // Intervalo de leitura
+  display.clearDisplay();
+
+  display.setTextSize(2); // Define o tamanho do texto
+  display.setTextColor(SSD1306_WHITE); // Define a cor do texto (branco)
+  display.setCursor(0, 0);
+  if (actual == false){
+    display.println(String(set_temp));
+  }
+  else{
+    display.println(String(temperature));
+  } // Define a posição do cursor // Imprime a primeira linha
+  // display.println("World!"); // Imprime a segunda linha
+
+  display.display(); // Exibe o texto no display
+
   if (isnan(temperature)) {
     Serial.println('0');
   } else {
@@ -45,27 +88,7 @@ void loop() {
  int pwm = sendPWM(90);
   ledcWrite(channel, pwm);
   float humidity = dht.getHumidity();
-  // if (isnan(humidity)) {
-  //   Serial.println("Erro ao ler a umidade!");
-  // } else {
-  //   Serial.print("Umidade: ");
-  //   Serial.print(humidity);
-  //   Serial.println("%");
-  // }
-  Heltec.display->clear();
-  Heltec.display->setTextAlignment(TEXT_ALIGN_LEFT);
-  Heltec.display->setFont(ArialMT_Plain_16);
-  
-  Heltec.display->drawString(20, 0, "Temperatura");
-  Heltec.display->drawString(50, 15, "atual:");
-  Heltec.display->setFont(ArialMT_Plain_24);
-  Heltec.display->drawString(13, 35, String(temperature));
-  Heltec.display->drawString(78, 35, "°C");
-  Heltec.display->display();
-  delay(2000);
-  Heltec.display->clear();
-  Heltec.display->setTextAlignment(TEXT_ALIGN_LEFT);
-  Heltec.display->setFont(ArialMT_Plain_16);
+
   
 
 }
