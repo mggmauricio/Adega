@@ -7,12 +7,7 @@
 Adafruit_SSD1306 display(OLED_RESET);
 // #include <heltec.h>
 
-#define DHTPIN 13     // Pino de dados do sensor DHT11
-#define DHTTYPE DHT11   // Tipo do sensor (DHT11)
-#define PWMPIN 12
-#define UPPIN 19
-#define LOWPIN 2
-#define MENUPIN 15
+#define LMPIN A0
 
 
 const int freq = 3;
