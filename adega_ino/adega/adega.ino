@@ -30,6 +30,17 @@ int sendPWM(int dutyCycle){
   return 65535-((65535*dutyCycle)/100);
 }
 
+void sendToPython(float sensor, float setpoint, int duty, float y_controlador, int pwm){
+  Serial.print(sensor);
+  Serial.print(",");
+  Serial.print(setpoint);
+  Serial.print(",");
+  Serial.print(duty);
+  Serial.print(",");
+  Serial.print(y_controlador);
+  Serial.print(",");
+  Serial.println(pwm);
+}
 
 int controller(float sensor, float setpoint){
   float temperature_sensor = sensor;
@@ -48,19 +59,22 @@ int controller(float sensor, float setpoint){
   ek1= ek0; 
   float y1 = -uk0;
   if (y1 <= 0.0){
-   duty = 0; 
+  duty = 0; 
   } else if (y1 >= 4.0){
     duty = 100;
   } else {
     duty = map(y1 * 10, 1, 79, 1, 99);
   }
 
-  Serial.print("Saída do controlador: ");
-  Serial.println(y1);
-  Serial.print("Duty Cycle: ");
-  Serial.println(duty);
-  return duty;
-  // return y1
+  // Serial.print("Saída do controlador: ");
+  // Serial.println(y1);
+  // Serial.print("Duty Cycle: ");
+  // Serial.println(duty);
+  int pwm = sendPWM(duty);
+  sendToPython(temperature_sensor, setpoint, duty, y1, pwm);
+
+  
+  return pwm;
 }
 
 
@@ -74,11 +88,8 @@ void read_sensor(){
   if (isnan(temp)){
   }else{
     temperature = temp;
-    pwm_percent = controller(temperature, set_temp);
-    Pwm = sendPWM(pwm_percent);
-    ledcWrite(channel, Pwm);
-    Serial.print("Pwm: ");
-    Serial.println(Pwm);
+    int pwm = controller(temperature, set_temp);
+    ledcWrite(channel, pwm);
   }
 
 }
@@ -92,7 +103,7 @@ void IRAM_ATTR up() {
   } 
 }
 void IRAM_ATTR low(){
-  if(set_temp > 12.0 && actual == false){
+  if(set_temp > 8.0 && actual == false){
   set_temp -= 0.5;
   }
 }
