@@ -8,9 +8,9 @@ import threading
 
 graphname = f'grafico_estufa{datetime.now()}.png'
 dataname = f'data_estufa{datetime.now()}.csv'
-nAmostras = 4
+nAmostras = 2100
 # Configuração da porta serial
-serial_port = '/dev/ttyACM0'  # Substitua pela porta serial correta
+serial_port = '/dev/ttyUSB1'  # Substitua pela porta serial correta
 baud_rate = 9600
 
 # Inicializa a conexão serial
@@ -50,9 +50,12 @@ def read_serial_data():
         writer = csv.writer(file)
         while True:
             # Lê uma linha da porta serial
-            data = ser.readline().decode().strip().split(',')
+            data = ser.readline().decode().strip().split(',') 
+
             if len(data) == 5:
+                print(data[0])
                 current_temperature = float(data[0])
+                print(data[0])
                 setpoint = float(data[1])
                 duty = int(data[2])
                 y_controller = float(data[3])

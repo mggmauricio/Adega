@@ -60,8 +60,8 @@ int controller(float sensor, float setpoint){
   float y1 = -uk0;
   if (y1 <= 0.0){
   duty = 0; 
-  } else if (y1 >= 4.0){
-    duty = 100;
+  } else if (y1 >= 2.0){
+    duty = 85;
   } else {
     duty = map(y1 * 10, 1, 79, 1, 99);
   }
@@ -128,7 +128,7 @@ void setup() {
   display.clearDisplay();
   // pinMode(DHT_PIN, INPUT_PULLUP);
   // attachInterrupt(digitalPinToInterrupt(DHTPIN), readSensor, RISING);
-  timer.attach(3, read_sensor);
+  timer.attach(2, read_sensor);
   pinMode(UPPIN, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(UPPIN), up, RISING);
   pinMode(LOWPIN, INPUT_PULLUP);
