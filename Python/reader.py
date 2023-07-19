@@ -6,11 +6,11 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import threading
 
-graphname = f'grafico_estufa{datetime.now()}.png'
-dataname = f'data_estufa{datetime.now()}.csv'
-nAmostras = 2100
+graphname = f'grafico_estufa2{datetime.now()}.png'
+dataname = f'data_estufa2{datetime.now()}.csv'
+nAmostras = 500
 # Configuração da porta serial
-serial_port = '/dev/ttyUSB1'  # Substitua pela porta serial correta
+serial_port = '/dev/ttyUSB0'  # Substitua pela porta serial correta
 baud_rate = 9600
 
 # Inicializa a conexão serial
